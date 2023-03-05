@@ -35,11 +35,19 @@ async fn main() {
     fut.await;
 }
 
+macro_rules! clean {
+    ($expre: expr) => {
+        html_escape::encode_text($expre)
+    };
+}
+
 macro_rules! no_good {
     ($expre: expr) => {
+        let aux = $expre;
         return Response::builder()
             .status(500)
-            .body(Body::from(format!("tg2h: {}", $expre)))
+            .header("Content-Type", "text/html; charset=utf-8")
+            .body(Body::from(format!("tg2h: {}", clean!(&aux))))
             .unwrap();
     };
 }
@@ -91,12 +99,6 @@ fn proxy(path: &str) -> warp::reply::Response {
             .body(Body::from(raw))
             .unwrap()
     }
-}
-
-macro_rules! clean {
-    ($expre: expr) => {
-        html_escape::encode_text($expre)
-    };
 }
 
 // Gemtext to HTML
