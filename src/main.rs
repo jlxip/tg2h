@@ -12,7 +12,7 @@ extern crate lazy_static;
 
 lazy_static! {
     static ref URL: String = env::var("TG2H_URL").unwrap();
-    static ref STYLE: String = env::var("TG2H_STYLE").unwrap_or("".to_string());
+    static ref STYLE: String = env::var("TG2H_STYLE").unwrap_or_else(|_| String::new());
 }
 
 #[tokio::main]
@@ -35,7 +35,7 @@ macro_rules! no_good {
 
 // Get Gemini response
 fn proxy(path: &str) -> warp::reply::Response {
-    let url = format!("{}{}", &*URL, path.to_string());
+    let url = format!("{}{}", &*URL, path);
     let Ok(url) = Url::try_from(url.as_str()) else {
         no_good!(format!("bad url: {}", url));
     };
@@ -129,7 +129,7 @@ fn gem2html(gem: &str) -> String {
     let style = if STYLE.len() > 0 {
         format!("<link rel=\"stylesheet\" href=\"{}\">", *STYLE)
     } else {
-        "".to_string()
+        String::new()
     };
 
     // Wrap it in a nice HTML file with a header, and that's it
