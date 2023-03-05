@@ -17,6 +17,10 @@ lazy_static! {
 
 #[tokio::main]
 async fn main() {
+    // Solve URL and STYLE so it crashes now if it has to
+    let _ = &*URL;
+    let _ = &*STYLE;
+
     let filter = warp::any()
         .and(warp::path::full())
         .map(|p: warp::path::FullPath| proxy(p.as_str()));
