@@ -39,7 +39,7 @@ macro_rules! no_good {
     ($expre: expr) => {
         return Response::builder()
             .status(500)
-            .body(Body::from(format!("TG2H: {}", $expre)))
+            .body(Body::from(format!("tg2h: {}", $expre)))
             .unwrap();
     };
 }
