@@ -21,7 +21,14 @@ async fn main() {
         .and(warp::path::full())
         .map(|p: warp::path::FullPath| proxy(p.as_str()));
 
-    warp::serve(filter).run(([0, 0, 0, 0], 8080)).await;
+    let (_addr, fut) =
+        warp::serve(filter).bind_with_graceful_shutdown(([0, 0, 0, 0], 8080), async move {
+            println!("tg2h up and running");
+            tokio::signal::ctrl_c()
+                .await
+                .expect("failed to listen to shutdown signal");
+        });
+    fut.await;
 }
 
 macro_rules! no_good {
