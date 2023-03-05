@@ -1,0 +1,14 @@
+[package]
+name = "tg2h"
+version = "0.1.0"
+edition = "2021"
+
+[profile.release]
+strip = true
+
+[dependencies]
+tokio = { version = "1.26.0", features = ["full"] }
+warp = "0.3.3"
+lazy_static = "1.4.0"
+gmi = "0.2.1"
+html-escape = "0.2.13"
