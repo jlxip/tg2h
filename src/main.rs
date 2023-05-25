@@ -71,6 +71,14 @@ fn proxy(path: &str) -> warp::reply::Response {
         StatusCode::Redirect(_) => {
             no_good!(format!("redirect not supported: {}", resp.meta));
         }
+        StatusCode::PermanentFailure(1) => {
+            // Error 51 (not found)
+            return Response::builder()
+                .status(404)
+                .header("Content-Type", "text/html; charset=utf-8")
+                .body(Body::from(format!("not found: {}", clean!(&resp.meta))))
+                .unwrap();
+        }
         // Anything else is an actual error
         x => {
             no_good!(format!("error: {:?}: {}", x, resp.meta));
