@@ -1,18 +1,15 @@
-FROM alpine:3.17 as build
+FROM alpine:3.18 as build
 
-# These from the stable branch
-RUN apk add --no-cache git libgcc
-# This from edge. TODO: Change this once Rust 1.65 gets to stable in Alpine Linux
-RUN apk add --no-cache --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community cargo
+RUN apk add --no-cache libgcc cargo
 
-# Clone, build, and install
-RUN git clone https://github.com/jlxip/tg2h ~/tg2h
-RUN cd ~/tg2h && cargo build --release
-RUN install -Dvm755 ~/tg2h/target/release/tg2h /usr/bin/tg2h
+# Copy, build, and install
+COPY . /repo
+RUN cd /repo && cargo build --release
+RUN install -Dvm755 /repo/target/release/tg2h /usr/bin/tg2h
 
 # Cleanup
-RUN rm -rf ~/tg2h ~/.cargo
-RUN apk del git cargo
+RUN rm -rf /repo /root/.cargo
+RUN apk del cargo
 
 # Flatten
 FROM scratch
